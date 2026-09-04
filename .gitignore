@@ -1,0 +1,11 @@
+.env
+.env.*
+*.dump
+*.sql.gz
+*.json
+!package.json
+exports/
+backups/
+inventory.yml
+vault*.yml
+docker-compose.production.yaml

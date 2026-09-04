@@ -1,0 +1,7 @@
+all:
+  children:
+    datalens:
+      hosts:
+        bi-demo:
+          ansible_host: 192.0.2.10
+          ansible_user: deploy

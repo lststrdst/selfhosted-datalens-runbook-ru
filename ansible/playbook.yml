@@ -1,0 +1,65 @@
+---
+- name: Deploy DataLens Open Source
+  hosts: datalens
+  become: true
+  vars:
+    datalens_root: /opt/datalens
+    # Восстановление должно быть воспроизводимым: ветка main запрещена.
+    datalens_git_ref: REPLACE_WITH_TESTED_TAG_OR_COMMIT
+    datalens_domain: bi.example.internal
+  pre_tasks:
+    - name: Require pinned DataLens release
+      ansible.builtin.assert:
+        that:
+          - datalens_git_ref != "REPLACE_WITH_TESTED_TAG_OR_COMMIT"
+          - datalens_git_ref != "main"
+        fail_msg: "Укажите проверенный tag или commit DataLens."
+  tasks:
+    - name: Check Docker Compose
+      ansible.builtin.command: docker compose version
+      changed_when: false
+
+    - name: Create deployment directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0750"
+      loop:
+        - "{{ datalens_root }}"
+        - "{{ datalens_root }}/shared"
+
+    - name: Checkout DataLens
+      ansible.builtin.git:
+        repo: https://github.com/datalens-tech/datalens.git
+        dest: "{{ datalens_root }}/source"
+        version: "{{ datalens_git_ref }}"
+        update: true
+
+    - name: Generate production Compose and secrets once
+      ansible.builtin.command:
+        cmd: ./init.sh --hc --domain "{{ datalens_domain }}" --https
+        chdir: "{{ datalens_root }}/source"
+        creates: "{{ datalens_root }}/source/docker-compose.production.yaml"
+      no_log: true
+
+    - name: Start or update DataLens
+      ansible.builtin.command:
+        cmd: docker compose -f docker-compose.production.yaml up -d
+        chdir: "{{ datalens_root }}/source"
+      register: compose_up
+      changed_when: >-
+        'Started' in compose_up.stdout or
+        'Created' in compose_up.stdout or
+        'Recreated' in compose_up.stdout
+
+    - name: Wait for UI
+      ansible.builtin.uri:
+        url: "https://{{ datalens_domain }}/"
+        status_code: [200, 302]
+        validate_certs: true
+      register: ui_health
+      until: ui_health.status in [200, 302]
+      retries: 30
+      delay: 5
