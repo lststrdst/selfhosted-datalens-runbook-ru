@@ -12,6 +12,8 @@ Docker Compose для одного хоста, Ansible для повторяем
 - [архитектура и границы](docs/ARCHITECTURE.ru.md);
 - [резервное копирование, восстановление и мониторинг](docs/OPERATIONS.ru.md);
 - [пример Ansible](ansible/playbook.yml);
+- [обезличенная страница статуса](examples/status/index.html) и
+  [Nginx-фрагмент](examples/nginx-status.conf);
 - [когда нужен Kubernetes](docs/KUBERNETES.ru.md).
 
 ## Быстрый старт через Ansible

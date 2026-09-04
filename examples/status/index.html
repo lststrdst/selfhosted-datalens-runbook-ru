@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>BI-платформа — статус</title>
+  <style>
+    :root { color-scheme: dark; --bg:#0d0f13; --card:#171a20; --line:#2a2e37; --text:#f7f8fa; --muted:#9da5b3; --ok:#28c99a; --warn:#f6b73c; --bad:#f05d72; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; background:var(--bg); color:var(--text); font:15px/1.45 Inter,Arial,sans-serif; }
+    main { width:min(920px,calc(100% - 28px)); margin:auto; padding:42px 0 64px; }
+    h1 { margin:0 0 8px; font-size:clamp(30px,5vw,46px); }
+    .lead,.updated,.item p,.note { color:var(--muted); }
+    .summary,.item,.note { margin-top:16px; padding:19px 21px; border:1px solid var(--line); border-radius:16px; background:var(--card); }
+    .summary-line,.title { display:flex; align-items:center; gap:12px; font-size:17px; font-weight:700; }
+    .dot { width:11px; height:11px; border-radius:50%; background:var(--warn); }
+    [data-state="ok"] .dot { background:var(--ok); } [data-state="bad"] .dot { background:var(--bad); }
+    .items { display:grid; gap:12px; margin-top:16px; }
+    .item { display:grid; grid-template-columns:1fr auto; gap:16px; margin:0; }
+    .item p { margin:5px 0 0 23px; }
+    .badge { align-self:center; padding:6px 10px; border-radius:999px; background:#252a33; }
+    .item[data-state="ok"] .badge { color:#8aefd0; } .item[data-state="bad"] .badge { color:#ff9cad; }
+    @media (max-width:600px) { .item { grid-template-columns:1fr; } .badge { justify-self:start; margin-left:23px; } }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Статус BI-платформы</h1>
+    <p class="lead">Живая проверка пользовательских веб-сервисов без вывода технических секретов.</p>
+    <section class="summary" id="summary" data-state="pending" aria-live="polite">
+      <div class="summary-line"><span class="dot"></span><span id="summary-text">Проверяем сервисы…</span></div>
+      <div class="updated" id="updated"></div>
+    </section>
+    <section class="items" aria-label="Компоненты">
+      <article class="item" id="gateway" data-state="pending"><div><div class="title"><span class="dot"></span>Защищённый вход</div><p>TLS-шлюз и маршрутизация.</p></div><span class="badge">Проверяется</span></article>
+      <article class="item" id="datalens" data-state="pending"><div><div class="title"><span class="dot"></span>DataLens</div><p>Интерфейс отчётов.</p></div><span class="badge">Проверяется</span></article>
+      <article class="item" id="metabase" data-state="pending"><div><div class="title"><span class="dot"></span>Metabase</div><p>Дополнительный BI-контур.</p></div><span class="badge">Проверяется</span></article>
+      <article class="item" data-state="pending"><div><div class="title"><span class="dot"></span>Данные и качество</div><p>ETL, свежесть, MDM и ошибки публикации.</p></div><span class="badge">Подключается</span></article>
+    </section>
+    <section class="note">Не показывайте неизвестные состояния зелёными. История, Docker и данные добавляются через серверный API мониторинга без токенов в браузере.</section>
+  </main>
+  <script src="status.js" defer></script>
+</body>
+</html>
