@@ -44,3 +44,7 @@ ansible-playbook -i inventory.yml ansible/playbook.yml --ask-vault-pass
 ## Лицензия
 
 MIT. См. [LICENSE](LICENSE).
+
+---
+
+© lststrdst — документация и примеры конфигурации.
